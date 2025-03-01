@@ -1,0 +1,733 @@
+\documentclass[a4paper,12pt]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{lipsum} % Pour générer du faux texte. À retirer dans le document final.
+\usepackage{natbib}
+\usepackage{bbm}
+\usepackage{titlesec}
+
+% Paramètres de la page
+\geometry{top=2.5cm, bottom=2.5cm, left=2cm, right=2cm, footskip=1cm}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Maxence C.}
+\lhead{TD Calcul Stochastique}
+\cfoot{\thepage} % Numéro de page au milieu du pied de page
+\renewcommand{\headrulewidth}{2pt}
+\renewcommand{\footrulewidth}{0pt} % Pas de ligne en bas
+\setlength{\parindent}{0pt}
+
+% Mise en page de la première page
+\fancypagestyle{plain}{
+  \fancyhf{} % Supprime les en-têtes et pieds par défaut
+  \cfoot{\thepage} % Numéro de page au milieu
+  \renewcommand{\headrulewidth}{0pt} % Pas de ligne d'en-tête
+  \renewcommand{\footrulewidth}{0pt} % Pas de ligne en bas
+}
+
+% Titre du document
+\title{TD de Calcul Stochastique \\
+Proposition de corrigé}
+\author{Maxence Caucheteux}
+\date{\today}
+
+% Macros
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\prob}{\mathbb{P}}
+\newcommand{\R}{\mathfrak{R}_0}
+\newcommand{\Hun}{H^1(\Omega)}
+\newcommand{\Ho}{H^1_0(\Omega)}
+\newcommand{\vois}{\mathring{\mathcal{U}}}
+\newcommand{\ind}{\mathbbm{1}}
+\newcommand{\f}{\mathcal{F}}
+\newcommand{\n}{\mathbb{N}}
+\newcommand{\m}{\mathcal{M}}
+\newcommand{\norm}{\mathcal{N}}
+\newcommand{\sme}{\mathcal{E}}
+
+% Chargement de hyperref avec les options personnalisées pour les cadres rouges
+\usepackage[
+    colorlinks=false,         % Pas de lien coloré
+    linkbordercolor={1 0 0},  % Cadre rouge autour des liens
+    pdfborder={0 0 1}         % Taille du cadre autour des liens
+]{hyperref}
+
+% Supprimer le décalage des sous-sections et masquer le numéro
+\titleformat{\subsection}[hang]{\normalfont\bfseries}{}{0pt}{}
+
+\begin{document}
+
+\maketitle
+Le but de ce document est de proposer des réponses aux exercices du \href{https://perso.lpsm.paris/~nfournier/TDCS.pdf}{TD de calcul stochastique de Nicolas Fournier}. Ce document est susceptible de contenir des erreurs et des inexactitudes mathématiques ainsi que des erreurs typographiques. Tous les exercices ne sont pas abordés dans ce document mais seulement ceux que j'ai faits.
+
+% Insertion de la table des matières
+\tableofcontents
+\newpage
+
+\section{Martingales locales}
+
+\subsection{Exercice 1}
+C'est dans le cours. La suite de temps d'arrêt $\tau_n = \inf \{ t \geq 0 \ | \ |M_t -M_0|=n \}$ réduit bien $M$. \\
+
+\subsection{Exercice 2} 
+Pour $n \in \n$, $M^{\tau_n}$ est locale donc il existe une suite croissante de temps d'arrêt $(\tau_{n,k})_{k \geq 0}$ qui tend p.s. vers $+ \infty$ et telle que pour tout $k \in \n$, $(M_{\tau_n \wedge \tau_{n,k} \wedge t} - M_0)_{t \geq 0}$ est une martingale. \\
+
+On a envie de dire que $M^{\tau_{n} \wedge \tau_{n,n}} - M_0$ est une martingale et conclure mais $(\tau_{n} \wedge \tau_{n,n})$ n'est pas forcément croissante. On construit alors une fonction $\varphi : \n \longrightarrow \n$ de la façon suivante : 
+\[
+\left\{
+\begin{array}{l}
+\varphi(0) = 0 \\
+\varphi(n) = \inf \{ k > \varphi(n-1) \ | \ \tau_{n,k} > \tau_{n-1, \varphi(n-1)} \} \ \ \forall n \geq 1
+\end{array}
+\right.
+\] 
+
+La fonction $\varphi$ est bien définie puisque pour tout $n \in \n^*$, $(\tau_{n,k})_{k \in \n}$ tend vers $+ \infty$. Ainsi, pour tout $n \in \n^*$, on a $\tau_{n-1, \varphi(n-1)} \leq \tau_{n,\varphi (n)}$ par construction et donc en posant $\sigma_n=\tau_n \wedge \tau_{n,\varphi(n) }$, on obtient que $(\sigma_n)$ est croissante et elle tend p.s. vers $+ \infty$ car $(\tau_n)_{n \in \n}$ tend p.s. vers $+\infty$. \\
+
+Comme $(M_{\sigma_n \wedge t} - M_0)_{t \geq 0}$ est une martingale, on conclut que $M$ est une martingale locale. \\
+
+\subsection{Exercice 4}
+\textbf{(i)} Comme $M^{\tau_n}$ est une martingale u.i. continue donc continue à droite, $|M^{\tau_n}|$ est une sous martingale u.i. continue à droite. Donc via théorème d'arrêt pour les sous martingales, puisque $\tau_n \wedge \tau \leq \tau_n$, on a $\E (|M_{\tau_n \wedge \tau}|) \leq \E (|M_{\tau_n}|)$, et ce pour tout $n \in \n$. \\
+
+\textbf{(ii)} On note $\mathbb{T}$ l'ensemble des temps d'arrêt finis (pour la filtration de $M$). On a :
+$$\sup_{\tau \in \mathbb{T}} \E (|M_{\tau}|) \geq \sup_{n \in \n} \E (|M_{\tau_n}|)$$ puisque pour tout $n$, $\tau_n$ est un temps d'arrêt fini. \\
+ 
+Par le point $\textbf{(i)}$ on a 
+$$\sup_{\tau \in \mathbb{T}} \sup_n \E(|M_{\tau_n \wedge \tau}|) \leq \sup_n \E (|M_{\tau_n}|)$$
+Par ailleurs, pour tout $\tau \in \mathbb{T}$, on a :
+\begin{align*}
+\sup_n \E(|M_{\tau_n \wedge \tau}|) & \geq \liminf_{n \infty} \E(|M_{\tau_n \wedge \tau}|) \\
+& \geq \E(\liminf_{n \infty} |M_{\tau_n \wedge \tau}|) \ \ \text{via Fatou} \\
+& = \E (|M_{\tau}|)
+\end{align*}
+D'où finalement : 
+$$\sup_{\tau \in \mathbb{T}} \E (|M_{\tau}|) \leq \sup_{\tau \in \mathbb{T}} \sup_n \E(|M_{\tau_n \wedge \tau}|) \leq \sup_n \E (|M_{\tau_n}|)$$
+Et donc on a bien l'égalité $\sup_{\tau \in \mathbb{T}} \E (|M_{\tau}|) = \sup_n \E (|M_{\tau_n}|)$. \\
+
+\subsection{Exercice 5} 
+On pose $M_t = \E (Y \ | \f_t)$. Soit $T>0$. En admettant que $M$ est continue à droite, on montre par convergence dominée que p.s. :
+$$\int_{0}^T M(s) d A_s = \lim_{n \infty} \sum_{i=1}^{p_n} M_{t_{i}^n} (A(t_i^n)-A(t_{i-1}^n))$$ 
+où $0=t_0^n <t_1^n < ... < t_{p_n}^n = T$ est une suite de subdivisions de $[0,T]$ dont le pas tend vers $0$. \\
+
+Comme $Y$ est bornée, soit une constante déterministe $L>0$ telle que $|Y| \leq L$. On a $|\sum_{i=1}^{p_n} M_{t_{i}^n} (A(t_i^n)-A(t_{i-1}^n))| \leq L A(T) \leq LK \in L^1$. Donc via convergence dominée, on a :
+\begin{align*}
+\E \left( \int_0^T M(s) dA_s \right) & = \lim_{n\infty} \E \left( \sum_{i=1}^{p_n} M_{t_{i}^n} (A(t_i^n)-A(t_{i-1}^n)) \right) \\
+& = \lim_{n\infty} \sum_{i=1}^{p_n} \E \left( \E ( Y \ | \ \f_{t_{i}^n})(A(t_i^n)-A(t_{i-1}^n)) \right) \ \ \text{Fubini} \\
+& = \lim_{n \infty} \E \left( Y \sum_{i=1}^{p_n} (A(t_i^n)-A(t_{i-1}^n) \right) \ \ \text{Fubini et }A(t_i^n)-A(t_{i-1}^n) \ \ \f_{t_i^n} \text{ mesurable} \\
+& = \E (Y A(T))
+\end{align*}
+Comme $M$, $Y$ et $A$ sont bornés, on fait tendre $T$ vers l'infini afin d'obtenir par convergence dominée l'égalité recherchée :
+$$\E \left( \int_0^{\infty} \E (Y \ | \ \f_t) dA_s \right) = \E \left( \int_0^{\infty} M(s) dA_s \right) = \E(Y A_{\infty})$$
+
+\subsection{Exercice 8}
+Comme $(M_t^2 - \langle M \rangle_t)_{t \geq 0}$ est une martingale locale, par le cours le processus arrêté $(M_{t \wedge \tau}^2 - \langle M \rangle_{t \wedge \tau})_{t \geq 0}$ est aussi une martingale locale. De plus $(\langle M \rangle_{t \wedge \tau})_{t \geq 0}$ est croissant et nul en $0$. C'est donc le crochet de la martingale locale $M^{\tau}$ i.e. $\langle M^{\tau} \rangle_t= \langle M \rangle_{t \wedge \tau}$. Donc $\langle M^{\tau} \rangle = \langle M \rangle^{\tau}$. \\
+
+Soit $0=t_0^n<t_1^n<...<t_{p_n}^n=t$ une suite de subdivisions de $[0,t]$ de pas $\delta_n$ tendant vers $0$. Par le cours on sait que  $\langle M^{\tau}, N \rangle_t$ est limite en probabilité de $S_n = \sum_{i=1}^{p_n} (M^\tau_{t_i^n} - M^\tau_{t_{i-1}^n})(N_{t_i^n} - N_{t_{i-1}^n})$ et que $\langle M^{\tau}, N^{\tau} \rangle_t$ est limite en probabilité de $\tilde{S}_n = \sum_{i=1}^{p_n} (M^\tau_{t_i^n} - M^\tau_{t_{i-1}^n})(N^\tau_{t_i^n} - N^\tau_{t_{i-1}^n})$. \\
+
+On a :
+$$|S_n - \tilde{S}_n| = \left| \sum_{i=1}^{p_n} (M^\tau_{t_i^n} - M^\tau_{t_{i-1}^n}) (N^\tau_{t_i^n} - N^\tau_{t_{i-1}^n} - (N_{t_i^n} - N_{t_{i-1}^n})) \right| $$
+
+Or, dans cette somme, tous les termes sont nuls excepté éventuellement le terme indicé par $1 \leq i \leq p_n$ tel que $t_{i-1}^n \leq \tau < t_i^n$, si tant est qu'il existe. En effet, si $t_{i-1}^n > \tau$, alors $M^{\tau}_{t_i^n} - M^{\tau}_{t_{i-1}^n} = 0$, et si $t_i^n \leq \tau$, alors $N^\tau_{t_i^n} - N^\tau_{t_{i-1}^n} - (N_{t_i^n} - N_{t_{i-1}^n}) = 0$. \\
+
+Compte tenu de cela, on a :
+
+$$|S_n - \tilde{S}_n| \leq 4 \left( \sup_{s \in [0,t]} |N_s| \right) \sup_{r, s \in [0,t], \ |r-s| \leq \delta_n} |M_r - M_s| \xrightarrow[n \to \infty]{} 0$$
+
+Ce qui prouve que $|S_n - \tilde{S}_n|$ tend vers $0$ et donc que 
+
+$$\langle M^{\tau}, N \rangle_t = \langle M^{\tau}, N^{\tau} \rangle_t, \quad \forall t \geq 0$$
+
+Ensuite, on obtient ainsi facilement $\langle M^{\tau}, N \rangle = \langle M^{\tau}, N^{\tau} \rangle = \langle M,N \rangle^{\tau}$ par ce qui précède puisque :
+
+\begin{align*}
+\langle M^{\tau}, N^{\tau} \rangle &= \frac{1}{2} (\langle M^{\tau} + N^{\tau} \rangle - \langle M^{\tau} \rangle - \langle N^{\tau} \rangle) \\
+&= \frac{1}{2} (\langle (M+N)^{\tau} \rangle - \langle M \rangle^{\tau} - \langle N \rangle^{\tau}) \\
+&= \frac{1}{2} (\langle M+N \rangle^{\tau} - \langle M \rangle^{\tau} - \langle N \rangle^{\tau}) \\
+&= \langle M,N \rangle^{\tau}.
+\end{align*}
+
+
+Enfin, pour la dernière égalité demandée, on écrit :
+\begin{align*}
+\langle M - M^{\tau} \rangle & =  \langle M - M^{\tau} , M - M^{\tau} \rangle \\
+& = \langle M \rangle - 2 \langle M, M^\tau \rangle + \langle M^{\tau} \rangle \ \ \text{bilinéarité et symétrie du crochet double} \\
+& = \langle M \rangle - \langle M^\tau \rangle \ \ \text{par ce qui précède}
+\end{align*}
+
+\subsection{Exercice 9}
+Supposons qu'on ait montré le résultat pour toutes vraies martingales $M$ et $N$ issues de $0$. Soient $M$ et $N$ deux martingales locales indépendantes. Il existe deux suites croissantes $(\tau_n)$ et $(\sigma_n)$ de temps d'arrêt qui tendent p.s. vers $+ \infty$ et telles que $(\tau_n)$ et $(\sigma_n)$ sont indépendantes et $M^{\tau_n}-M_0$ et $N^{\sigma_n}-N_0$ sont deux vraies martingales U.I. Ces deux martingales sont issues de $0$ et elles sont indépendantes. Par l'hypothèse, on a donc :
+$$\forall n \in \n, \ \ \langle M^{\tau_n}-M_0, N^{\sigma_n} - N_0 \rangle_t = 0 $$
+On a par ailleurs : 
+$$\langle M^{\tau_n}-M_0, N^{\sigma_n}-N_0 \rangle_t = \langle M^{\tau_n}, N^{\sigma_n} \rangle_t = \langle M,N \rangle_{\tau_n \wedge \sigma_n \wedge t}$$
+Et donc par convergence monotone, en passant à la limite $n \infty$, on a $\langle M,N \rangle_t = 0$. \\
+
+Montrons donc le résultat pour deux vraies martingales $M$ et $N$ issues de $0$. On pose $(\f^M_t)$ la filtration naturelle de $M$ et $(\f^N_t)$ celle de $N$. On pose par ailleurs $\mathcal{G}_t = \sigma (\f^M_t \cup \f^N_t)$. \\
+
+On va montrer que $MN$ est une martingale pour $(\mathcal{G}_t)$. Tout d'abord $M_t N_t$ est bien intégrable puisque $\E(|M_t N_t|) = \E (|M_t|) \E (|N_t|) < + \infty$ par indépendance et puisque $M_t$ et $N_t$ sont toutes deux intégrables. Ensuite, on a pour $0 \leq s \leq t$ :
+\begin{align*}
+\E \left( M_t N_t \ind_A \ind_B \right) & = \E (M_t \ind_A) \E (N_t \ind_B) \ \ \text{par indépendance} \\
+& = \E \left( \E (M_t \ | \ \f_s^M)  \ind_A \right) \E \left( \E (N_t \ | \ \f_s^N)  \ind_A \right) \\
+& = \E (M_s \ind_A) \E (N_s \ind_B) \ \ \text{car } M,N \text{ sont deux martingales} \\
+& = \E (M_s N_s \ind_A \ind_B ) \ \ \text{par indépendance}
+\end{align*}
+On montre en fait que pour tout $C \in \mathcal{G}_s$, $\E (M_s N_s \ind_C) = \E (M_s N_s \ind_C)$ (*). On le fait par lemme de classe monotone. En effet, on considère la classe monotone  (vérifications élémentaires pour montrer que c'est bien une classe monotone) :
+$$\mathcal{M} = \{ C \in \mathcal{G}_s \ | \ \E (M_s N_s \ind_C) = \E (M_s N_s \ind_C) \}$$
+De plus l'ensemble $\mathcal{C}$ des parties $C$ de la forme précédente est stable par intersection finie. De sorte que via lemme de classe monotone, $\sigma (\mathcal{C}) = \mathcal{M} (\mathcal{C})$. \\
+
+On a $\mathcal{M} (\mathcal{C}) \subset \mathcal{M}$ puisque $\mathcal{M}$ contient $\mathcal{C}$, et on a $\sigma (C) = \mathcal{G}_t$. Ainsi cela donne (*) et donc $MN$ est une martingale  pour $(\mathcal{G}_t)$. Par proposition 4.4.12, on obtient $\langle M, N \rangle_t = 0$. \\
+
+Deux martingales locales indépendantes sont donc orthogonales.
+
+\subsection{Exercice 10}
+Le résultat provient directement du fait que $\langle M+N \rangle = \langle M \rangle + 2 \langle M,N \rangle + \langle N \rangle$ par bilinéarité et symétrie du crochet double et de l'inégalité de Kunita-Watanabe.
+
+\subsection{Exercice 13}
+\textbf{(i)} Puisque $(M_t^2- \langle M \rangle_t)_{t \geq 0}$ est une martingale locale (issue de $0$ car $M$ est issue de $0$), il existe une suite croissante de temps d'arrêt $(\tau_n)_{n \in \n}$ telle que $(M_{t \wedge \tau_n}^2- \langle M \rangle_{t \wedge \tau_n})_{t \geq 0}$ soit une martingale pour tout $n \in \n$. Via théorème d'arrêt, en prenant spécifiquement
+$$\tau_n = \inf \{t \geq 0 \ | \ |M_t| + \langle M \rangle_t \geq n\}$$
+(qui réduit bien $M^2 - \langle M \rangle$, \textit{cf} cours)) on sait que $(M_{t \wedge \tau \wedge \tau_n}^2- \langle M \rangle_{t \wedge \tau \wedge \tau_n})_{t \geq 0}$ est une martingale. \\
+
+Elle est de plus U.I. (puisque bornée par $n^2+n$) et donc par théorème d'arrêt on a :
+$$\E (M_{\tau \wedge \tau_n}^2- \langle M \rangle_{\tau \wedge \tau_n} ) =0$$
+Comme chacun des termes dans l'espérance est $L^1$ car borné (c'est l'intérêt d'avoir posé $\tau_n$ ainsi), on peut user de la linéarité et écrire pour tout $n \in \n$ : 
+$$\E (M_{\tau \wedge \tau_n}^2) =  \E ( \langle M \rangle_{\tau \wedge \tau_n}) $$
+Comme $\langle M \rangle$ est un processus croissant, on a $\E ( \langle M \rangle_{\tau \wedge \tau_n}) \leq \E ( \langle M \rangle_{\tau})$. Ainsi :
+$$\liminf_{n \infty} \E (M_{\tau \wedge \tau_n}^2) \leq \E ( \langle M \rangle_{\tau})$$
+Via Fatou on a $\liminf_{n \infty} \E (M_{\tau \wedge \tau_n}^2) \geq \E (M_{\tau}^2)$ et donc finalement $\E (M_{\tau}^2) \leq \E (\langle M \rangle_{\tau})$. \\
+
+\textbf{(ii)} On applique le point \textbf{(i)} à la martingale locale $M$ et au temps d'arrêt $t \wedge \tau_a$ qui est fini (car $\leq t$) afin d'obtenir $\E (M^2_{t \wedge \tau_a}) \leq  \E ( \langle M \rangle_{t \wedge \tau_a})$. On remarque ensuite que $M^2_{t \wedge \tau_a} \geq \ind_{\{ \tau_a \leq t \}} a^2$. Si bien que :
+$$a^2 \prob (\tau_a \leq t ) \leq \E (\langle M \rangle_{t \wedge \tau_a})$$ 
+
+\textbf{(iii)} On a :
+\begin{align*}
+\prob \left( \sup_{s \in [0,t]} |M_s| \geq a \right) & = \prob (\tau_a \leq t) \\
+& \leq a^{-2} \E (\langle M \rangle_{\tau_a \wedge t}) \ \ \text{via (ii)} \\
+& \leq a^{-2} \E (\langle M \rangle_t ) ) \ \ \text{croissance de } \langle M \rangle
+\end{align*}
+
+\subsection{Exercice 14}
+\textbf{(i)} Posons $\hat{\sigma}_a = \inf \{t \geq 0 \ | \ \langle M \rangle_t > a^2 \}$. Comme $M$ est une martingale locale et que $\hat{\sigma}_a$ est un temps d'arrêt, $M^{\hat{\sigma}_a}$ est une martingale locale. Elle est issue de $0$ car $M$ l'est. Si bien que via l'\textbf{exercice 13}, on a :
+$$\prob \left( \sup_{s \in [0,t]} |M^{\hat{\sigma}_a}_s| \geq a \right) \leq a^{-2} \E (\langle M \rangle^{\hat{\sigma}_a}_{t})$$
+Par la convergence monotone, on a : 
+$$\prob \left( \sup_{s \in [0,t]} |M^{\hat{\sigma}_a}_s| \geq a \right) \xrightarrow[t \to \infty]{} \prob \left( \sup_{s \in [0,\hat{\sigma}_a]} |M_s| \geq a \right)$$
+Et de nouveau par convergence monotone :
+$$ \E (\langle M \rangle_t^{\hat{\sigma}_a}) \xrightarrow[t \to \infty]{} \E (\langle M \rangle_{\hat{\sigma}_a})$$
+On a de plus : 
+$$\langle M \rangle_{\hat{\sigma}_a} = \ind_{\{ \hat{\sigma}_a < + \infty \}} a^2 + \ind_{\{ \hat{\sigma}_a = + \infty \}} \langle M \rangle_{\infty} = \ind_{\{ \langle M \rangle_{\infty} > a^2 \}} a^2 + \ind_{\{ \langle M \rangle_{\infty} \leq a^2\}} \langle M \rangle_{\infty} $$
+D'où :
+$$\prob \left( \sup_{s \in [0, \hat{\sigma_a}]} |M_s| > a \right) \leq \E (a^2 \wedge \langle M \rangle_{\infty} )$$
+
+Enfin, on obtient l'inégalité demandée en remarquant que $\sigma_a \leq \hat{\sigma}_a$ et que par conséquent $\prob \left( \sup_{s \in [0, \hat{\sigma_a}]} |M_s| > a \right) \geq \prob \left( \sup_{s \in [0, \sigma_a]} |M_s| > a \right)$. \\
+
+\textbf{(ii)} On a :
+$$\left\{ \sup_{t \geq 0} |M_t| > a \right\} = \left\{ \sup_{t \geq 0} |M_t| > a , \langle M \rangle_{\infty} < a^2\right\} \sqcup \left\{ \sup_{t \geq 0} |M_t| > a  , \langle M \rangle_{\infty} \geq a^2 \right\} $$
+Et on a $\left\{ \sup_{t \geq 0} |M_t| > a , \langle M \rangle_{\infty} < a^2 \right\} \subset \left\{ \sup_{t \in [0, \sigma_a]} |M_t| > a \right\}$ et $\left\{ \sup_{t \geq 0} |M_t| > a  , \langle M \rangle_{\infty} \geq a^2 \right\} \subset \left\{ \langle M \rangle_{\infty} \geq a^2 \right\}$. Ainsi, on a :
+\begin{align*}
+\prob \left(\sup_{t \geq 0} |M_t| > a \right) & \leq \prob \left(\sup_{t \in [0, \sigma_a]} |M_t| > a \right) + \prob \left(\langle M \rangle_{\infty} \geq a^2 \right) \\
+& \leq \frac{1}{a^2} \E (a^2 \wedge \langle M \rangle_{\infty}) + \prob (\langle M \rangle_{\infty} \geq a^2) \ \ \text{via (i)}
+\end{align*}
+
+\textbf{(iii)} On pose $X = \sup_{t \geq 0} |M_t|$. On a :
+\begin{align*}
+\E (X)  & = \int_{0}^{+ \infty} \prob (X > x) dx \\
+& \leq \int_{0}^{+ \infty} \left( \prob (\langle M \rangle_{\infty} \geq x^2 ) + \frac{1}{x^2} \E (x^2 \wedge \langle M \rangle_{\infty}) \right) dx \ \ \text{par (ii)} \\
+\end{align*}
+On a d'une part $\int_{0}^{+ \infty} \prob (\langle M \rangle_{\infty} \geq x^2) dx = \int_{0}^{+\infty} \prob (\sqrt{\langle M \rangle_{\infty}} \geq x) dx = \E (\sqrt{\langle M \rangle_{\infty}})$ et d'autre part :
+\begin{align*}
+\int_{0}^{+ \infty} \frac{1}{x^2} \E (x^2 \wedge \langle M \rangle_{\infty}) dx & = \E \left( \int_{0}^{+ \infty} 1 \wedge ( \langle M \rangle_{\infty}/x^2) dx \right) \\
+& = \E \left( \sqrt{\langle M \rangle_{\infty}} + \int_{\sqrt{\langle M \rangle_{\infty}}}^{\infty} \frac{\langle M \rangle_{\infty}}{x^2} dx \right) \\
+& = 2 \sqrt{\langle M \rangle_{+\infty}}
+\end{align*}
+Finalement :
+$$\E \left( \sup_{t \geq 0} |M_t| \right) = \E(X) \leq 3 \E (\sqrt{\langle M \rangle_{\infty}}) $$ \\
+
+\textbf{(iv)} Si $\E (\sqrt{\langle M \rangle_{\infty}}) < + \infty$, alors pour $t \geq 0$ on a par (iii) :
+$$\E \left( \sup_{s \in [0,t]} |M_t| \right ) \leq \E \left( \sup_{s \geq 0} |M_t| \right ) \leq 3 \E (\sqrt{\langle M \rangle_{\infty}}) < + \infty$$
+Par le cours $M$ est donc une (vraie) martingale. \\
+
+Elle est de plus uniformément intégrable car avec $X = \sup_{t \geq 0} |M_t| \in L^1$, on a par la convergence dominée :
+$$\sup_{t \geq 0} \E \left( |M_t| \ind_{\{ |M_t| \geq K \}} \right) \leq \E (X \ind_{\{ X \geq K \}}) \xrightarrow[K \to \infty]{} 0 $$
+
+\textbf{(v)} Si pour tout $t \geq 0$, $\E (\sqrt{\langle M \rangle_t}) < + \infty$. Soit $t \geq 0$. On sait que $M^t$ est encore une martingale locale (toujours issue de $0$) et on a par (iii) appliqué à cette martingale locale $\E \left( \sup_{s \geq 0} |M_s^t| \right) \leq 3 \E (\sqrt{\langle M^t \rangle_{\infty}})$ i.e. : 
+$$\E \left( \sup_{s \in [0,t]} |M_s| \right) \leq 3 \E \left( \sqrt{\langle M \rangle_t } \right) < + \infty$$ 
+Ainsi par le cours $M$ est une (vraie) martingale.
+
+\newpage
+
+\section{Intégrale stochastique}
+
+\subsection{Exercice 0}
+\textbf{(i)} Pour $n>m \geq 0$, on a en développant le carré :
+$$\E (|W^n (h) - W^m(h)|) = \E \left( \left( \sum_{k=m+1}^n \xi_k \langle e_k, h \rangle_H \right)^2 \right) = \sum_{k=m+1}^n \langle e_k, h \rangle_H^2 \xrightarrow[m,n \infty]{} 0$$
+puisque via Parseval $\|h\|_H^2 = \sum_{k=0}^{\infty} \langle e_k, h \rangle_H^2 < + \infty$ donc le reste de cette série tend vers $0$. \\
+
+Ainsi, $(W^n(h))_{n \in \n}$ est de Cauchy dans $L^2 (\Omega)$ donc elle y converge, disons vers $W(h)$. \\
+
+\textbf{(ii)} Pour $n \in \n$, $W^n (h) \sim \norm (0, \sum_{k=0}^n \langle e_k, h \rangle_H^2)$. De plus, par (i) $W^n(h)$ converge dans $L^2$ vers $W(h)$ donc également en loi, et on a 
+$$\sum_{k=0}^n \langle e_k, h \rangle^2 \xrightarrow[n \infty]{} \|h\|^2_H$$
+Par 1.1.3 (i), on a donc $W(h) \sim \norm (0, \|h\|^2 )$. \\
+
+\textbf{(iii)} On note $G$ l'espace des v.a. gaussiennes d'espérance nulle muni de la norme $L^2$. L'application 
+$$\varphi : H \rightarrow G, h \mapsto W(h)$$
+est alors une isométrie vectorielle. \\
+
+En effet, sa linéarité provient de la linéarité des $W_n(h)$ et d'un passage à la limite. De plus, comme $W(h) \sim \norm (0, \|h\|^2)$, on a $\E (W(h)^2) = \|h \|^2$ et donc $\E \left( \varphi(h)^2 \right)^{1/2} = \|h \|_H$. Ainsi, $\varphi$ est une isométrie. \\
+
+\textbf{(iv)} Puisque $\varphi$ est une isométrie, on a :
+$$\E ( \varphi (W(h_k) - \varphi(h))^2 ) =  \E ( \varphi (W(h_k - h)^2 )= \|h_k-h\|_H^2 \xrightarrow[k \infty]{} 0 $$
+Ce qui est la convergence recherchée. \\
+
+\textbf{(v)} \textit{Étape 1 :} \\
+Si $h$ est de la forme $h(s)=\sum_{i=0}^p \alpha_i \ind_{]t_i, t_{i+1}]} (s)$, on a :
+\begin{align*}
+\int_0^t h(s) dB_s & = \sum_{i=0}^p \alpha_i (B_{t_{i+1} \wedge t} - B_{t_i \wedge t}) \\
+& = \sum_{i=0}^p \alpha_i (W ( \ind_{[0, t_{i+1} \wedge t]} )-W(\ind_{[0, t_{i} \wedge t]})) \\
+& = \sum_{i=0}^p \alpha_i W ( \ind_{[0,t]} \ind_{]t_i, t_{i+1}]} ) \\
+& = W \left( \ind_{[0,t]} \sum_{i=0}^p \alpha_i \ind_{]t_i, t_{i+1}]} \right) \\
+& = W (\ind_{[0,t]} h)
+\end{align*}
+
+\textit{Étape 2 :} \\
+Pour $h \in H$, il existe une suite de fonctions $(h_n) \in H^{\n}$ de la forme précédente qui converge dans $H$ vers $h$ (par densité). Par l'étape précédente, pour tout $n \in \n$, on a :
+$$W (h_n \ind_{[0,t]}) = \int_0^t h_n(s) dB_s$$
+
+Par ailleurs :
+$$W(h_n \ind_{[0,t]}) \xrightarrow[n \infty]{L^2} W(h \ind_{[0,t]}) $$
+par le point (iv). \\
+
+Ensuite, comme $d \langle B \rangle_s = s$, la suite $(h_n)$ converge dans $L^2_t(B)$ vers $h$ et donc par définition de l'intégrale stochastique on a :
+$$\int_0^t h_n (s) dB_s \xrightarrow[n \infty]{L^2} \int_0^t h(s) dB_s$$
+
+Ainsi, on obtient par passage à la limite :
+$$W (h \ind_{[0,t]}) = \int_0^t h(s) dB_s$$
+
+\subsection{Exercice 3}
+\textbf{1/} On commence par montrer l'exercice 5.2.6 du cours. Je rappelle son énoncé : \\
+
+\textit{Soit $M,N \in \m^2$ et $H \in L^2(M), K \in L^2(N)$. Si $\tau$ est un temps d'arrêt \textbf{borné}, alors on a :
+$$\E \left( \int_{0}^{\tau} H_s \, dM_s \right) = 0 \quad \text{et} \quad \E \left( \left( \int_0^{\tau} H_s \, dM_s \right) \left( \int_{0}^{\tau} K_s \, dN_s \right) \right) = \E \left( \int_0^{\tau} H_s K_s \, d \langle M,N \rangle_s \right)$$}
+
+Pour le montrer, soit $C>0$ une constante telle qsue $\tau \leq C$. On a pour $t \geq 0$ :
+$$\E ((H \cdot M)^{\tau}_t) = \E ((H \cdot M^{\tau})_{t}) = 0$$
+puisque $H \cdot M^{\tau}$ est une martingale nulle en 0. Ainsi en prenant $t=C$ on a bien :
+$$\E \left( \int_{0}^{\tau} H_s dM_s \right) = 0$$
+Ensuite, pour $t \geq 0$, on a :
+\begin{align*}
+\E \left( \left( \int_{0}^{\tau \wedge t} H_s dM_s \right) \left( \int_{0}^{\tau \wedge t} K_s dN_s \right) \right) & = \E \left( \left( \int_{0}^t H_s dM^{\tau}_s \right) \left( \int_0^{t} K_s dN^{\tau}_s \right) \right) \ \ \text{ par 5.2.5} \\
+& = \E \left( \langle H \cdot M^\tau, K \cdot N^{\tau} \rangle_t \right) \\
+& = \E \left( \int_0^{t} H_s K_s d \langle M^{\tau}, N^{\tau} \rangle_s  \right) \ \ \text{par 5.2.2} \\
+& = \E \left( \int_0^{t} H_s K_s d \langle M, N \rangle^{\tau}_s  \right) \ \ \text{par exercice 8 feuille 4} \\
+& = \E \left( \int_{0}^{t} \ind_{[0,\tau]} H_s K_s d \langle M,N \rangle_s \right) \ \ \text{car } d \langle M,N \rangle^{\tau}_s = \ind_{[0,\tau]} d \langle M,N \rangle_s \\
+& = \E \left( \int_{0}^{t \wedge \tau} H_s K_s d \langle M,N \rangle_s \right)
+\end{align*}
+En appliquant cette égalité avec $t=C$ on obtient la deuxième égalité demandée. \\
+
+On remarque également que si $S$ et $T$ sont deux temps d'arrêt bornés, puisque $\langle M^S, N^T \rangle = \langle M,N \rangle^{S \wedge T}$, on a aussi :
+$$\E \left( \left( \int_0^{S} H_s dM_s \right) \left( \int_{0}^{T} K_s dN_s \right) \right) = \E \left( \int_0^{S \wedge T} H_s K_s \, d \langle M,N \rangle_s \right)$$
+Traitons à présent l'exercice 3. Par ce qui précède, pour $t \geq 0$, comme $S \wedge t$ et $T \wedge t$ sont bornés (par $t$), on a :
+$$\E \left( \left( \int_0^{S \wedge t} H_s dM_s \right) \left( \int_0^{T \wedge t} K_s dN_s \right) \right) = \E \left( \int_{0}^{t \wedge S \wedge T} H_s K_s d \langle M,N \rangle_s \right)$$
+On a envie à présent d'effectuer un passage à la limite $t\rightarrow \infty$ mais bizarrement je n'arrive pas à l'écrire, j'y reviendrai plus tard.
+
+\subsection{Exercice 4}
+On écrit $X_t=X_0+M_t+V_t$ où $M$ est une martingale locale issue de $0$ et $V$ est un processus à variation finie issu de $0$. On a :
+$$\sup_{s \in [0,t]} |(H^n \cdot X)_s| \leq \sup_{s \in [0,t]} |(H^n \cdot M)_s| + \sup_{s \in [0,t]} |(H^n \cdot V)_s|$$
+
+\textit{Étape 1 :} \\
+Par inégalité triangulaire, on a :
+$$\sup_{s \in [0,t]} |(H^n \cdot V)_s| \leq \sup_{s\in [0,t]} \int_0^s |H_u^n| | dV_u | \leq \int_0^t |H_u^n | |dV_u|$$
+On a $|H_u^n| \leq H_u$ avec $\int_0^t |H_u| |dV_u| < + \infty$ et p.s. pour tout $u \in [0,t]$, $H_u^n \xrightarrow[n \infty]{} 0$. Si bien que via convergence dominée, on a p.s. $\int_0^t |H^n_u| |dV_u| \xrightarrow[n \infty]{} 0$. Par comparaison, on obtient :
+$$\sup_{s \in [0,t]} |(H^n \cdot V)_s| \xrightarrow[n \infty]{\text{p.s.}} 0$$
+
+\textit{Étape 2 :} \\
+On montre maintenant que $\sup_{s \in [0,t]} |(H^n \cdot M)_t|$ converge en probabilité vers $0$, ce qui permettra de conclure. On pose pour cela :
+$$\tau_p := \inf \{ t \geq 0 \ | \ H_t + \langle M \rangle_t \geq p \}$$
+On note d'abord que $\prob( \tau_p \geq t) \xrightarrow[p \infty]{} 1$. \\
+
+Ensuite, on a :
+\begin{align*}
+\E \left( \left( \int_0^{\tau_p} H_s^n dM_s \right)^2 \right) & = \E \left( \int_0^{\tau_p} (H_s^n)^2 d \langle M \rangle_s \right) \\
+& = \E \left( \int_0^{+ \infty} (H_s^n)^2 \ind_{ [0, \tau_p] } (s) d \langle M \rangle_s \right)
+\end{align*}
+On a $(H_s^n)^2 \ind_{ [0, \tau_p] } (s) \leq p^2 \ind_{ [0, \tau_p] }$ et :
+$$\int_0^{+\infty} p^2 \ind_{[0, \tau_p]} (s) d \langle M \rangle_s \leq \langle M^{\tau_p} \rangle_{\infty} \leq p^3 < + \infty$$
+Et on a par hypothèse p.s. pour tout $s \geq 0$, $(H^n_s)^2 \ind_{ [0,\tau_p ] } (s) \xrightarrow[n \infty]{} 0$. Si bien que par convergence dominée on a p.s.
+$$\int_0^{\tau_p} (H_s^n)^2 d \langle M \rangle_s \xrightarrow[n \infty]{} 0$$
+Par ailleurs, on a :
+$$\int_0^{\tau_p} (H_s^n)^2 d \langle M \rangle_s \leq \int_0^{\tau_p} H_s^2 d \langle M \rangle_s$$
+avec $\E \left( \int_0^{\tau_p} H_s^2 d \langle M \rangle_s \right) \leq p^3 < + \infty$. De nouveau par convergence dominée, mais cette fois-ci pour la mesure de probabilités de l'espace de probabilités dans lequel on travaille, on a :
+$$\E \left( \left( \int_0^{\tau_p} H_s^n dM_s \right)^2 \right) = \E \left( \int_0^{+\infty} (H_s^n)^2 \ind_{\{ 0, \tau_p \}} d \langle M \rangle_s \right) \xrightarrow[n \infty]{} 0$$
+
+On a ensuite :
+\begin{align*}
+\E \left(  \sup_{s \in [0,t]} (H^n \cdot M^{\tau_p})^2_s \right) & \leq 4 \E \left( (H^n \cdot M^{\tau_p})_t^2 \right) \ \ \text{par Doob} \\
+& = 4 \E \left( \int_0^t (H_s^n)^2 d \langle M^{\tau_p} \rangle_s \right) \xrightarrow[n \infty]{} 0 \ \ \text{par ce qui précède} \ \ (*)\\
+\end{align*}
+Soit $\varepsilon >0$. On pose $A_n (\varepsilon ) = \left\{ \sup_{s \in [0,t]} |(H \cdot M)_s| \geq \varepsilon \right\}$. On a : 
+\begin{align*}
+\prob (A_n (\varepsilon)) & = \prob (A_n (\varepsilon), \tau_p > t) + \prob (A_n(\varepsilon), \tau_p \leq t) \\
+& \leq \prob (\tau_p \leq t) + \prob (A_n (\varepsilon), \tau_p > t)
+\end{align*}
+En remarquant que $\left\{ A_n (\varepsilon), \tau_p > t \right\} \subset \left\{ \sup_{s \in [0,t]} |(H^n \cdot M^{\tau_p})| \geq \varepsilon \right\}$ et en usant de Cauchy-Schwarz, puis de (*), il vient :
+$$ \forall p \in \n, \ \limsup_{n \infty} \prob (A_n (\varepsilon)) \leq \prob (\tau_p \leq t )$$
+Comme $\prob (\tau_p \leq t ) \xrightarrow[p \infty]{} 0$ (\textit{cf} remarque en début de preuve), on a finalement $\prob (A_n (\varepsilon)) \xrightarrow[n \infty]{} 0$ et donc :
+$$\sup_{s \in [0,t]} |(H^n \cdot M)_s| \xrightarrow[n \infty]{\prob} 0 $$
+Ce qui donne bien la convergence en probabilité recherchée :
+$$\sup_{s \in [0,t]} |(H^n \cdot X)_s| \xrightarrow[n \infty]{\prob} 0$$
+
+\subsection{Exercice 9}
+On suppose pour simplifier que $H_0=0$. Cela ne pose pas de problème car on se ramène facilement au cas général par linéarité.\\
+
+Soit $\varepsilon >0$ et $a>0$. Avec $b >0$, on a :
+\begin{align*}
+\prob \left( \left| \frac{1}{B_{\varepsilon}} \int_0^{\varepsilon} H_s \, dB_s \right| \geq a \right) 
+& = \prob \left( \left| \int_0^{\varepsilon} \frac{H_s}{B_{\varepsilon}} \, dB_s \right| \geq a \right) \\
+& \leq \prob \left( \int_0^{\varepsilon} \frac{H_s^2}{B_{\varepsilon}^2} \, ds \geq b \right) + \frac{b}{a^2} \quad \text{par exercice 10} \\
+& = \prob \left( \frac{1}{\varepsilon B_1^2} \int_0^{\varepsilon} H_s^2 \, ds \geq b \right) + \frac{b}{a^2} \quad \text{changement d'échelle}
+\end{align*}
+On montre facilement que p.s. $\frac{1}{\varepsilon B_1^2} \int_0^{\varepsilon} H_s^2 ds \xrightarrow[\varepsilon \rightarrow 0]{} 0$ via continuité de $H$ en $0$ et car $H_0=0$. Ainsi par convergence dominée, via domination triviale par $1$ on a :
+$$ \prob \left( \frac{1}{\varepsilon B_1^2} \int_0^{\varepsilon} H_s^2 ds \geq b \right) \xrightarrow[\varepsilon \rightarrow 0]{} 0$$
+Avec $\varepsilon_0 >0$, on prend $b >0$ tel que $b/a^2 \leq \varepsilon_0/2$. Par ce qui précède, il existe $\alpha >0$ tel que pour $\varepsilon \in \ ]0, \alpha]$, on a :
+$$ \prob \left( \frac{1}{\varepsilon B_1^2} \int_0^{\varepsilon} H_s^2 ds \geq b \right) \leq \varepsilon_0/2$$
+De sorte que pour tout $\varepsilon \in \ ]0, \alpha]$ on a :
+$$\prob \left( \left| \frac{1}{B_{\varepsilon}} \int_0^{\varepsilon} H_s \, dB_s \right| \geq a \right) \leq \varepsilon_0$$
+Ce qui donne bien : 
+$$\prob \left( \left| \frac{1}{B_{\varepsilon}} \int_0^{\varepsilon} H_s \, dB_s \right| \geq a \right) \xrightarrow[\varepsilon \rightarrow 0]{} 0$$
+Ce qui est la convergence en probabilité recherchée. \\
+
+\subsection{Exercice 10}
+En reprenant l'exercice 14, on peut montrer que pour $M$ une martingale locale issue de $0$ et $a,b >0$, on a en fait : 
+$$\prob \left( \sup_{t \geq 0} |M_t| > a \right) \leq \prob \left( \langle M \rangle_{\infty} \geq b \right) + \frac{1}{a^2} \E \left( b \wedge \langle M \rangle_{\infty} \right)$$
+En appliquant cette inégalité à la martingale locale $M^t$ (martingale locale $M$ arrêtée à l'instant déterministe $t$) on a :
+$$\prob \left( \sup_{s \in [0,t]} |M_s| > a \right) \leq \prob \left( \langle M \rangle_{t} \geq b \right) + \frac{1}{a^2} \E \left( b \wedge \langle M \rangle_{t} \right)$$
+
+Pour conclure sur l'inégalité de notre exercice, avec $M$ une martingale locale et $H \in L^2_{\text{loc}} (M)$, on applique l'inégalité précédente à la martingale locale $H \cdot M$ qui est bien issue de 0, ce qui donne :
+$$\prob \left( \left| \int_0^t H_s dM_s \right| > a \right) \leq \prob \left( \sup_{s \in [0,t]} \left| (H \cdot M)_s \right| > a \right) \leq \prob \left( \int_0^t H_s^2 d \langle M \rangle_s \geq b \right) + b/a^2$$
+
+\textbf{(ii)} On suppose $H=0$ pour simplifier (on se ramène par linéarité à ce cas). Soit $a>0$ et $\varepsilon >0$. On a par (i), pour $n \in \mathbb{N}$ et $b>0$,  
+\[
+\mathbb{P} \left( \left| \int_0^t H^n_s dM_s \right| \leq a \right)  
+\leq \mathbb{P} \left( \int_0^t (H^n_s)^2 d \langle M \rangle_s \geq b \right) + \frac{b}{a^2}.
+\]
+Soit $b >0$ tel que $\frac{b}{a^2} \leq \frac{\varepsilon}{2}$. Comme $\int_0^t (H^n_s)^2 d \langle M \rangle_s$ converge en probabilité vers $0$, il existe $n_0 \in \mathbb{N}$ tel que :
+\[
+\forall n \geq n_0, \quad \mathbb{P} \left( \int_0^t (H^n_s)^2 d \langle M \rangle_s \geq b \right) \leq \frac{\varepsilon}{2}.
+\]
+Ainsi pour tout $n \geq n_0$, on a :
+$$ \prob \left( \left| \int_{0}^t H_s^n dM_s \right| \geq a \right) \leq \varepsilon $$
+D'où :
+$$ \prob \left( \left| \int_{0}^t H_s^n dM_s \right| \geq a \right) \xrightarrow[n \infty]{\prob} 0$$
+Ce qui est la convergence en probabilité recherchée. \\
+
+\subsection{Exercice 11} 
+On a :
+\begin{align*}
+\E \left( \int_0^1 (H_s-K_s)^2 ds \right) & = \E \left( \int_0^1 (H_s-K_s)^2 d \langle B \rangle_s \right) \\
+& = \E \left( \left( \int_0^1 (H_s-K_s) dB_s \right)^2 \right) \\
+& = 0
+\end{align*}
+Ce qui conclut. \\
+
+\section{Formule d'Itô et applications}
+
+\subsection{Exercice 1}
+On va montrer que $(\beta, \gamma)$ est un $(\f_t)_{t \geq 0}$-mouvement brownien à valeurs dans $\mathbb{R}^2$. Il est clair que $\beta$ et $\gamma$ sont des martingales locales issues de $0$ et des calculs élémentaires montrent que $\langle \beta \rangle_t = \langle \gamma \rangle_t = t$ et $\langle \beta, \gamma \rangle_t =0$. On conclut par caractérisation de Lévy du mouvement brownien.
+
+\subsection{Exercice 2}
+\textbf{(i)} Avec $t>0$ et $0=t_0^n < t_1^n <...<t_{p_n}^n =t$ une suite de subdivisions de $[0,t]$ dont le pas tend vers $0$. Par le cours, on a en probabilité $\langle X,Y \rangle_t = \lim\limits_{n \infty} \sum_{i=0}^{p_n-1} (X_{t_{i+1}}^n - X_{t_i}^n)(Y_{t_{i+1}}^n - Y_{t_i}^n)$ et $\int_0^t Y_s dX_s = \lim\limits_{n \infty} \sum_{i=0}^{p_n -1}Y_{t_i^n} (X_{t_{i+1}^n} - X_{t_i^n})$. Et donc en probabilité :
+$$\int_0^t Y_s \circ dX_s = \lim\limits_{n \infty} \left( \sum_{i=0}^{p_n-1} (X_{t_{i+1}}^n - X_{t_i}^n)(Y_{t_{i+1}}^n - Y_{t_i}^n) + \sum_{i=0}^{p_n-1} Y_{t_i^n} (X_{t_{i+1}^n} - X_{t_i^n}) \right) $$
+Un calcul montre par ailleurs que pour tout $n \in \n$ :
+$$\sum_{i=0}^{p_n-1} (X_{t_{i+1}}^n - X_{t_i}^n)(Y_{t_{i+1}}^n - Y_{t_i}^n) + \sum_{i=0}^{p_n-1} Y_{t_i^n} (X_{t_{i+1}^n} - X_{t_i^n})  = \frac{1}{2} \sum_{i=0}^{p_n -1} (Y_{t_{i+1}^n} + Y_{t_{i}^n}) (X_{t_{i+1}^n} - X_{t_{i}^n})$$
+Et ainsi en probabilité :
+$$\int_0^t Y_s \circ dX_s = \lim\limits_{n \infty} \frac{1}{2} \sum_{i=0}^{p_n -1} (Y_{t_{i+1}^n} + Y_{t_{i}^n}) (X_{t_{i+1}^n} - X_{t_{i}^n})$$
+
+\textbf{(ii)} Par formule d'Itô, on a :
+$$F(X_t)-F(X_0)=\int_0^t F'(X_s) dX_s + \frac{1}{2} \int_0^t F''(X_s)d \langle X \rangle_s$$
+Il suffit donc de montrer que $\int_0^t F''(X_s) d \langle X \rangle_s = \langle X, F'(X_.) \rangle_t$ pour conclure (\textit{cf} définition de l'intégrale de Stratonovich). Et c'est bien le cas puisque de nouveau via Itô, comme $F'$ est $C^2$, on peut écrire :
+$$F'(X_.) = \text{processus à variation finie} + F'' (X_. ) \cdot X$$
+Et donc :
+\begin{align*}
+\langle X, F'(X_. ) \rangle_t & = \langle X, F''(X_. ) \cdot X \rangle_t \\
+& = \int_0^t F''(X_s) d \langle X \rangle_s
+\end{align*}
+Ce qui conclut.
+
+\subsection{Exercice 3}
+On a :
+\begin{align*}
+\E \left( \left( \int_0^t \ind_{\{B_s = 0\}} dB_s \right)^2 \right) & = \E \left( \int_0^t \ind_{\{B_s = 0\}}^2 d \langle B \rangle_s \right) \ \ \text{par isométrie} \\
+& = \E \left(\int_0^t \ind_{\{B_s = 0\}}  ds \right)
+\end{align*}
+Pour tout $s \in \ ]0,t]$, p.s. $B_s \neq 0$ (gaussienne). Par continuité du mouvement brownien, on a en fait p.s. pour tout $s \in \ ]0,t]$, $B_s \neq 0$ i.e. $\ind_{\{ B_s = 0 \}} = 0$. Ainsi p.s. $\int_0^t \ind_{\{ B_s = 0 \}} ds = 0$ puis $\E \left( \int_0^t \ind_{\{ B_s = 0 \}} ds \right) = 0 $. On conclut donc que $\int_0^t \ind_{\{B_s = 0\}} dB_s = 0$ p.s.
+
+\subsection{Exercice 4}
+C'est l'exemple 6.1.6 du cours.
+
+\subsection{Exercice 6}
+Soit $M$ une martingale locale issue de $0$ telle que $\langle M \rangle_{\infty} = + \infty$. Par théorème de Dubins-Schwarz, il existe $B$ un mouvement brownien tel que $M_t = B_{\langle M \rangle_t}$. On sait que :
+$$\frac{B_t}{t} \xrightarrow[t \infty]{\text{p.s.}} 0$$
+Ainsi, puisque $\langle M \rangle_{\infty} = + \infty$, on a : 
+$$B_{\langle M \rangle_t} - \frac{1}{2} \langle M \rangle_t \xrightarrow[t \infty]{\text{p.s.}} - \infty$$
+et donc : 
+$$\sme (M) \xrightarrow[t \infty]{\text{p.s.}} 0$$ \\
+
+Si $\sme (M)$ était une vraie martingale U.I., on aurait :
+$$0 = \E (\sme (M)_{\infty}) = \E (\sme (M)_0) = 1$$
+Cela est absurde. Ainsi, il n'existe pas de martingale locale $M$ issue de $0$ telle que $\langle M \rangle_{\infty} = + \infty$. 
+
+\subsection{Exercice 9}
+\textbf{(i)} C'est un calcul immédiat. \\
+
+\textbf{(ii)} Via une IPP, puisque $u$ est un processus à variation finie on a $\langle u, X \rangle_t = 0$ et :
+$$u(t)X_t-u(0)x_0 = \int_0^t u(s) dX_s + \int_0^t X_s u'(s) ds$$
+D'où :
+\begin{align*}
+u(0) x_0 + \int_0^t u(s) dX_s -2\int_0^t u^2(s) X_s ds & = u(t) X_t - \int_0^t X_s (u'(s)-2u^2(x))ds \\
+& = u(t) X_t - \int_0^t X_s g(s) ds \ \ \text{via (i)}
+\end{align*}
+C'est la formule demandée. \\
+
+\textbf{(iii)} On a $\langle M \rangle_t = 4 \int_0^t u^2(s) X_s ds$. Puis :
+\begin{align*}
+\sme (M)_t & = \exp{ \left( M_t - \frac{1}{2} \langle M \rangle_t \right) } \\
+& = \exp{ \left( u(0)x_0 + 2 \int_0^t u(s) \sqrt{X_s} d \beta_s - 2 \int_0^t u^2(s) X_s d s \right) } \\
+& = \exp{ \left( u(t)X_t - \int_0^t g(s) X_s ds + 2 \int_0^t u(s) \sqrt{X_s}d \beta_s - \int_0^t u(s) dX_s \right) } \ \ \text{via (ii)} \\
+\end{align*}
+Au vu de l'EDS vérifiée par $X$, on a :
+$$\int_0^t u(s) dX_s = 2 \int_0^t u(s) \sqrt{X_s} d \beta_s + a \int_0^t u(s)ds$$
+Et ainsi :
+\begin{align*}
+2 \int_0^t u(s)  \sqrt{X_s} d \beta_s - \int_0^t u(s) dX_s & = -a\int_0^t u(s) ds \\
+& = -a \int_0^t \frac{f'(s)}{2f(s)} ds  \\
+& = -\frac{a}{2} \ln (f(t))
+\end{align*}
+D'où :
+$$\sme (M)_t = f(t)^{-a/2} \exp{\left( u(t) X_t - \int_0^t g(s) X_s ds \right)}$$
+
+\textbf{(iv)} On a $f''=2gf \geq 0$ donc $f$ est convexe et ainsi $f'$ est croissante. De plus $f'(1)=0$ donc par croissance de $f'$, on obtient que pour tout $x \in [0,1]$, $f'(x) \leq f(1)=0$. La fonction $f$ est donc décroissante sur $[0,1]$. \\
+
+Par (iii) en $t=1$, comme $u(1)=0$, on a :
+$$f(1)^{-a/2} \exp{\left( -\int_0^1 g(s) X_s ds \right)} = \sme (M)_1$$
+On va passer à l'espérance cette relation afin d'obtenir la formule. On montre que $(\sme (M)_t)_{t \in [0,1]}$ est une vraie martingale. En effet, on a pour tout $t \in [0,1]$ :
+\begin{align*}
+\sme (M)_t & = f(t)^{-a/2} \exp{\left( u(t) X_t - \int_0^t g(s) X_s ds \right)} \ \ \text{par (iii)} \\
+& \leq \exp{\left( \frac{-a}{2} \ln(f(t)) \right) }
+\end{align*}
+puisque $u \leq 0$ et $X, g \geq 0$ sur $[0,1]$. Et avec $m \in \mathbb{R}$ tel que pour tout $t \in [0,1]$, $\ln (f(t)) \geq m$ (qui existe bien car $f$ est continue sur $[0,1]$ et à valeurs dans $\mathbb{R}_+^*$), on a donc :
+$$\sme (M)_t \leq \exp{\left( \frac{-am}{2} \right) }$$
+Ainsi $(\sme(M)_t)_{t \in [0,1]}$ est bornée. De plus, c'est une martingale locale en tant que semimartingale exponentielle d'une martingale locale. C'est donc une (vraie) martingale et donc :
+$$\E \left( \sme (M)_1 \right) = \E (\sme (M)_0) = \exp{\left( \frac{x_0 f'(0)}{2} \right)}$$
+Ce qui permet d'obtenir la formule demandée.  \\
+
+\textbf{(v)} Étant donné $\theta \neq 0$, la solution à l'équation $f''=\theta^2 f$ avec les conditions initiales $f(0)=1$ et $f'(1)=0$ est donnée par $f(x)=\frac{\cosh (\theta(x-1))}{\cosh(\theta)}$. On applique ainsi (iv) à $f$ qui est bien de classe $C^2$, avec $g(s)=\theta^2/2$ et $f'(x) = \frac{\theta \sinh(\theta(x-1))}{\cosh(\theta)}$, $f(1)=1/\cosh(\theta)$ et $f'(0)=-\theta \tanh (\theta)$. On obtient :
+$$
+\E \left[ \exp\left( \frac{\theta^2}{2} \int_0^1 X_s \, ds \right) \right] = \frac{\exp\left( -\frac{x_0 \theta \tanh(\theta)}{2} \right)}{\cosh(\theta)^{a/2}}
+$$
+La formule est évidente dans le cas $\theta=0$ : elle dit $1=1$. \\
+
+\textbf{(vi)} Avec $(B_t)_{t \geq 0}$ un mouvement brownien issu de $x$, par formule d'Itô appliqué à $F(x)=x^2$, on a :
+$$B_t^2 = x^2 + 2 \int_0^t B_s dB_s + t$$
+On choisit à présent $\beta_t = \int_0^t \text{sgn} (B_s) ds$. Par caractérisation de Lévy, $\beta$ est un mouvement brownien issu de $0$. On a de plus par construction de $\beta$ :
+$$B_t^2 = x^2 + 2 \int_0^t |B_s| d \beta_s + t$$
+Ainsi, via (v) appliqué à $X_t=B_t^2$, $x_0=x^2$ et $a=1$, on a :
+$$\E \left( \exp{\left( \frac{-\theta^2}{2} \int_0^1 B_s^2 ds\right) } \right) = \frac{\exp\left( -\frac{x^2 \theta \tanh(\theta)}{2} \right)}{\cosh(\theta)^{1/2}}$$
+
+\subsection{Exercice 11}
+On pose $L_t = B_{t \wedge \tau}$. C'est une martingale locale issue de $0$. On a de plus $\langle L \rangle_t = t \wedge \tau$. Comme $\E \left( e^{\tau /2} \right) < + \infty$, $\tau$ est fini p.s. et on a $\langle L \rangle_{\infty} = \tau$ et en fait $\E \left( e^{\langle L \rangle_{\infty}/2} \right) = \E \left( e^{\tau /2} \right) < + \infty$ par hypothèse. Ainsi via Novikov étendu (\textit{cf} appendice du polycopié) $(\sme (L))_{t \geq 0}$ est une (vraie) martingale U.I. et donc $\E \left( \sme (L)_{\infty} \right) = 1$, i.e. $\E \left( \exp{(B_{\tau} - \tau /2}) \right) = 1$.
+
+\subsection{Exercice 13}
+\textbf{(i)} On sait que $\limsup_{t \infty} B_t = + \infty$ et donc $\limsup_{t \infty} B_t+\gamma t =+ \infty$ p.s., d'où $T^{\gamma}_a < + \infty$ p.s. \\
+
+\textbf{(ii)} Soit $T>0$. On pose $L_t = \gamma B_t$ pour $t \in [0,T]$. C'est une martingale locale issue de $0$. On a $\langle L \rangle_t = \gamma^2 t$ et :
+$$\E \left( \exp{ \left( \frac{1}{2} \langle L \rangle_T \right) } \right) = \exp{\left( \frac{\gamma^2 t}{2} \right)} \leq \exp{\left( \frac{\gamma^2 T}{2} \right) }$$
+Par critère de Novikov étendu (\textit{cf} appendice du polycopié), $(\sme(L)_t)_{t \in [0,T]}$ est une (vraie) martingale U.I. et donc $\E (\sme (L)_T)=1$. \\
+
+Ainsi, par théorème de Girsanov, $\mathbb{Q} := \sme (L)_T \cdot \prob \sim \prob$ sur $(\Omega, \f_T)$ et sous $\mathbb{Q}$, $\tilde{B}_t =B_t - \langle B,L \rangle_t = B_t - \gamma t$ est un mouvement brownien. En posant $T_a = \inf \{ t \geq 0 \ | \ B_t=a \}$, on a alors :
+\begin{align*}
+\E \left( \exp{\left( - \lambda T_a^{\gamma } \wedge T \right)} \right) & = \E_{\mathbb{Q}} \left( \exp{\left( - \lambda T_a \wedge T \right)} \right) \\
+& = \E \left( \sme (L)_T \exp{\left( -\lambda T_a \wedge T \right)} \right) \\
+& = \E \left(\exp{\left( -\lambda T_a \wedge T \right)} \E \left( \sme (L)_T \ \middle| \ \f_{T_a \wedge T} \right) \right) \\
+& = \E \left( \sme (L)_{T_a \wedge T} \exp{\left( -\lambda T_a \wedge T \right)} \right) \ \ \text{théorème d'arrêt} \\
+& = \E \left( \exp{\left( \gamma B_{T \wedge T_a} - \frac{1}{2} \gamma^2 T \wedge T_a - \lambda T \wedge T_a \right)} \right)
+\end{align*}
+On passe à la limite $T \infty$ par la convergence dominée afin d'obtenir l'égalité :
+$$\E \left( \exp{\left( - \lambda T_a^{\gamma} \right)} \right) = e^{\gamma a} \E \left( \exp{\left( -(\gamma^2/2+\lambda)T_a \right)} \right)$$
+Et via exercice 6 de la feuille 2, on conclut que :
+$$\E \left( \exp{\left( - \lambda T_a^{\gamma} \right)} \right) = \exp{\left( a(\gamma - \sqrt{\gamma^2 + 2 \lambda}) \right)}$$
+
+\subsection{Exercice 16}
+Soit $L_t=\int_0^t f'(s) ds$. C'est une martingale locale issue de $0$ et $\langle L \rangle_t = \int_0^t (f'(s))^2 ds$ donc $\E(\exp{(\langle L \rangle_1 /2)})=\exp{\left( \frac{1}{2} \int_0^1 (f'(s))^2 ds \right)}< + \infty$. Ainsi via critère de Novikov, $(\sme (L)_t)_{t \in [0,1]}$ est une vraie martingale U.I. et donc $\E \left( \sme(L)_1 \right) = 1$. \\
+
+Ainsi par théorème de Girsanov, $\mathbb{Q} := \sme(L)_1 \cdot \prob \sim \prob$ sur $(\Omega, \f_1)$ et $\tilde{B}_t = B_t - \langle L, B \rangle_t = B_t-f(t)$ (puisque $f(0)=0$) est un mouvement brownien sous $\mathbb{Q}$. Et donc :
+\begin{align*}
+\prob \left( \sup_{t \in [0,1]} |B_t + f(t)| \leq x \right) & = \mathbb{Q} \left( \sup_{t \in [0,1]} |\tilde{B}_t + f(t)| \leq x \right) \\
+& = \mathbb{Q} \left( \sup_{t \in [0,1]} |B_t| \leq x \right) \\
+& = \E \left( \sme (L)_1 \ind_{\{ \sup_{t \in [0,1]} |B_t| \leq x \}} \right)
+\end{align*}
+Un calcul montre que $\sme (L)_1 = \exp{\left( \int_0^1 f'(s) dB_s - b/2 \right)}$. Par ailleurs, via une IPP on a :
+$$\int_0^1 f'(s) dB_s = f'(t) B_t - \int_0^1 B_s f''(s) ds$$
+Et donc sachant $\sup_{t \in [0,1]} |B_t| \leq x$, on voit que :
+$$\int_0^1 f'(s) dB_s \leq ax$$
+D'où, finalement :
+$$\prob \left( \sup_{t \in [0,1]} |B_t + f(t)| \leq x \right) \leq e^{ax-b/2} \prob \left( \sup_{t \in [0,1]} |B_t| \leq x \right)$$
+
+
+\section{Équations différentielles stochastiques}
+\subsection{Exercice 1} 
+C'est une EDS $E_0 (\sigma, b)$ avec $\sigma(x)=|x|$ et $b(x)=x/2$. Les fonctions $\sigma$ et $b$ sont continues et $t \geq 0$ et $x,y \in \mathbb{R}$, on a :
+$$|\sigma(x)-\sigma (y)| + |b(x)-b(y)| = ||x|-|y|| + \frac{1}{2} |x-y| \leq \frac{3}{2} |x-y|$$
+par deuxième inégalité triangulaire. \\
+
+Par le cours, il existe donc une unique solution forte. Cette solution est en fait $X_t=0$ car elle convient (puisque $X_0=0$).
+
+\subsection{Exercice 2}
+\textbf{(i)} Comme $s$ est de classe $C^2$, on a par la formule d'Itô :
+\begin{align*}
+s(X_t)-s(x) & = \int_0^t s'(X_s) dX_s + \frac{1}{2} s''(X_s) d\langle X \rangle_s \\
+& = \int_0^t s'(X_s) b(X_s) ds + \int_0^t s'(X_s) \sigma (X_s) dB_s + \frac{1}{2} \int_0^t s''(X_s) \sigma (X_s)^2 ds \\
+& = \int_0^t s'(X_s) \sigma (X_s) dB_s \ \ \text{puisque } \frac{1}{2} s'' \sigma^2 + s' b = 0
+\end{align*}
+Le processus $(s'(X)\sigma(X))\cdot B$ est une martingale (car on intègre contre le mouvement brownien). Donc $(s(X_t))_{t \geq 0}$ est une martingale. \\
+
+\textbf{(ii)} On pose :
+$$M_t = s(X_{t \wedge T_{a,b}}) - s(x)$$
+Par théorème d'arrêt, $M$ est une martingale. Elle est nulle en $0$. Ainsi par théorème de Dubins-Schwarz (version étendue où le crochet infini n'est pas forcément égal à $+\infty$), il existe un mouvement brownien $B$ tel que $M_t = B_{\langle M \rangle_t}$ pour tout $t \geq 0$. \\
+
+On a en fait :
+$$\langle M \rangle_t = \int_0^{t \wedge T_{a,b}} (s'(X_s))^2 (\sigma (X_s))^2 ds$$
+
+Soit $\omega \in \{T_{a,b} = + \infty\}$. Alors on a :
+$$\langle M \rangle_t (\omega) \geq t \min_{u \in [0,t]} (s'(u))^2 (\sigma (u))^2 \xrightarrow[t \infty]{} + \infty$$
+(noter que $\min_{u \in [0,t]} (s'(u))^2 (\sigma (u))^2 > 0$) \\
+
+Supposons $s(a)<s(b)$ pour simplifier (même preuve pour l'autre cas). Par monotonie de $s$, on a alors pour tout $t \geq 0$ : 
+$$B_{\langle M \rangle_t (\omega )} (\omega ) = M_t( \omega) \in [s(a) - s(x), s(b)-s(x)]$$
+Ainsi, si on avait $\prob (T_{a,b} = +\infty) > 0$, cela contredirait le fait que $\limsup_{t \infty} |B_t (\omega)| = \infty$ p.s. Donc $T_{a,b} < +\infty$ p.s. \\
+
+Ensuite, $M_t = B_{\langle M \rangle_t}$ est une vraie martingale donc $\E (B_{\langle M \rangle_t}) = \E (B_0)=0$, i.e. $\E (s(X_{t \wedge T_{a,b}})) = s(x)$. On passe à la limite $t \longrightarrow \infty$ par convergence dominée (en dominant $s(X_{t \wedge T_{a,b}})$ par $\sup_{u \in [a,b]} |s(u)| < + \infty$) afin d'obtenir $\E (s(X_{T_{a,b}})) = s(x)$. \\
+
+Par ailleurs :
+\begin{align*}
+\E (s(X_{T_{a,b}})) & = s(a) \prob (X_{T_{a,b}} = a) + s(b) \prob (X_{T_{a,b}} = b) \\
+& = (s(a)-s(b)) \prob (X_{T_{a,b}} = a) + s(b)
+\end{align*}
+
+Ainsi, on a bien :
+$$ \prob (X_{T_{a,b}} = a) = \frac{s(x) - s(b)}{s(a)-s(b)} $$
+
+\subsection{Exercice 3}
+C'est une équation de la forme $dX_t = b(X_t)dt+\sigma(X_t)dB_t$, $X_0=x_0$ i.e. de la forme $E_{x_0} (\sigma, b)$ avec $\sigma(x)=x/2$ et $b(x)=\sqrt{1+x^2}$.. On a :
+$$|\sigma(x)-\sigma(y)| + \frac{1}{2}|x-y| \leq \frac{3}{2} |x-y|$$
+(en remarquant que $\|\sigma'\|_{\infty} \leq 1$).
+Ainsi il existe une unique solution forte à l'équation sur l'espace filtré introduit. \\
+
+Ensuite, par Itô, pour $F$ de classe $C^2$, on a :
+$$F(B_t)=F(0)+\int_0^t F'(B_s) dB_s + \frac{1}{2} \int_0^t F''(B_s) ds$$
+Il suffit donc de trouver $F$ de classe $C^2$ telle que $F(0)=x_0$, $F'(x)=\sqrt{1+(F(x))^2}$ et $F''(x)=F(x)$ pour résoudre l'équation différentielle stochastique. La solution sera alors $X_t=F(B_t)$. \\
+
+On trouve $F(x)=\sinh (x+ \text{argsh}(x_0))$ et ainsi $X_t = \sinh (B_t + \text{argsh}(x_0))$.
+
+\subsection{Exercice 5} 
+\textbf{(i)} Le cas $H_s=1$ est facile à résoudre. En effet, l'unique solution $Y$ de cette équation dans ce cas est $Y_t = \sme (Z)_t = \exp{(Z_t - \frac{1}{2} \langle Z \rangle_t)}$. 
+Soit $X$ une solution de l'équation : 
+$$X_t = H_t + \int_0^t X_s dZ_s$$
+On applique la formule d'Itô multidimensionnelle à $(X_t, Y_t)$ et $f(x,y) = x/y$, qui est bien $C^2$ sur $\left(\mathbb{R}^*_+ \right)^2$. On obtient ainsi :
+$$X_t=\sme (Z)_t \left( H_0 + \int_0^t \frac{dH_s}{\sme(Z)_s} + \int_0^t \frac{d \langle H,Z \rangle_t}{\sme (Z)_s} \right)$$
+Ce qui achève la résolution. \\
+
+\textbf{(ii)} L'équation à résoudre est de la forme $X_t=H_t+\int_0^t X_s dZ_s$ avec $H_t=x+B_t$ et $Z_t= -\beta t$. On a $\sme(Z)_t= \exp{(-\beta t)}$, $H_0=x$, $dH_s=dB_s$ et $\langle H, Z \rangle_t=0$. Si bien que :
+$$X_t = \exp{(- \beta t)} \left( x + \int_0^t \exp{(\beta s)} dB_s \right)$$
+d'après le point (i).
+
+\subsection{Exercice 7} 
+
+L'équation à l'étude est $dX_t = (|X_t|^{\alpha} \wedge 1)dB_t$. Je suppose $\alpha < 1$. \\
+
+\textbf{(i)} On a $Y_t \geq 0$ et :
+\begin{align*}
+\E (Y_t) &= \E \left( \int_0^t \frac{\ind_{\{B_s \neq 0\}}}{|B_s|^{2 \alpha} \wedge 1} ds \right) \\
+&= \int_0^t \E \left( \frac{\ind_{\{ B_s \neq 0 \}}}{|B_s|^{2 \alpha} \wedge 1} \right) ds \quad \text{par Fubini} \\
+&= \int_0^t \E \left( \ind_{\{B_s \neq 0 \}} \ind_{\{1 \leq |B_s|^{2 \alpha} \}} + \ind_{\{B_s \neq 0 \}} \ind_{\{1 > |B_s|^{2 \alpha} \}} \frac{1}{|B_s|^{2 \alpha}} \right) ds \\
+&\leq \int_0^t \left( 1 + \E \left( \frac{1}{|B_s|^{2 \alpha}} \right) \right) ds.
+\end{align*}
+
+Or :
+\[
+\E \left( \frac{1}{|B_s|^{2 \alpha}} \right) = \frac{1}{s^{\alpha}} \E \left( \frac{1}{|B_1|^{2\alpha}} \right)
+\]
+On a bien l'intégrabilité de $x \mapsto \frac{1}{x^{2 \alpha }} e^{-x^2 /2}$ sur $]0, + \infty[$ par continuité sur $]0, \infty[$, par intégrabilité en $+\infty$ (par exemple car $=o(1/x^2)$) et en $0$ par critère de Riemann puisque $2\alpha \in \ ]0,1[$. Ainsi, on a :
+\[
+\E \left( \frac{1}{|B_1|^{2 \alpha}} \right) < + \infty.
+\]
+
+Et donc :
+\[
+\E (Y_t) \leq t + \E \left( \frac{1}{|B_1|^{2 \alpha}} \right) \int_0^t \frac{1}{s^{\alpha}} ds = t + \E \left( \frac{1}{|B_1|^{2 \alpha}} \right) \frac{t^{1- \alpha}}{1-\alpha} < + \infty.
+\]
+Ce qui montre que $Y_t < + \infty$ p.s. \\
+
+\textbf{(ii)} On montre qu'il n'y a pas unicité faible. \\
+On a une solution évidente qui est $X_t=0$. \\
+
+Ensuite, on cherche une autre solution et pour cela on suit l'indication de l'énoncé et on applique la méthode de changement de temps du cours. On introduit un espace filtré $(\Omega, \f, (\f)_t, \prob)$ (vérifiant les conditions habituelles) et $(B_t)$ un $(\f_t)$-mouvement brownien. On pose :
+$$A_t = \int_0^t \sigma^{-2} (B_s) \ind_{\{ B_s \neq 0 \}} ds = \int_0^t \frac{\ind_{\{ B_s \neq 0 \}}}{1 \wedge |B_s|^{2 \alpha}} ds$$
+On voit que $A$ est continu, strictement croissante, $A_0=0$ et :
+$$A_t \geq \int_0^t \ind_{\{ B_s \neq 0 \}} ds$$
+Comme p.s., $B_s \neq 0$ pour presque tout $s \in [0,t]$ on a $A_t \geq t$ (*) et donc $A_{\infty}=+\infty$. On peut donc introduire l'inverse $\tau_t$ de $A_t$ ($A_{\tau_t} = \tau_{A_t}=t$). C'est en fait $\tau_t = \inf \{ s > 0 \ | \ A_s > t \}$. On pose $\mathcal{G}_t = \f_{\tau_t}$ et $X_t=B_{\tau_t}$. \\
+
+On voit par théorème d'arrêt que $X$ est une $\mathcal{G}_t$ martingale. Noter que $\tau_t \leq t$ par (*). On pose :
+$$W_t = \int_0^t \frac{\ind_{\{ X_s \neq 0 \}}}{\sigma (X_s)} dX_s$$ 
+On a $\langle W \rangle_t = \int_0^t \frac{\ind_{\{ X_s \neq 0 \}}}{\sigma (X_s)^2} d \tau_s$. Or :
+$$\langle X \rangle_t = \tau_t = \int_0^t \sigma(X_s)^2 ds$$
+Et donc $d \tau_t = \sigma (X_t)^2 dt$. On obtient donc :
+$$\langle W \rangle_t = \int_0^t \ind_{\{ X_s \neq 0 \}} ds = t$$
+Par critère de Levy, $W$ est un mouvement brownien (pour la filtration $(\mathcal{G}_t)$) et on a :
+\begin{align*}
+\int_0^t \sigma (X_s) dW_s & = \int_0^t \sigma (X_s) \ind_{\{ X_s \neq 0 \}} \sigma^{-1} (X_s) dX_s \\
+& = \int_0^t \ind_{\{ X_s \neq 0 \}} dX_s \\
+& = X_t
+\end{align*}
+Donc on a construit une solution à l'équation et sa loi n'est pas la loi de la solution triviale nulle. Il n'y a donc pas unicité faible. \\
+
+\textbf{(iii)} Il y a dans ce cas unicité faible et trajectorielle puisque $x \mapsto |x|^{\alpha} \wedge 1$ est lipschitzienne.
+
+\subsection{Exercice 10} 
+\textbf{(i)} On a $dX_t = X_t (1-X_t^2)dB_t - \frac{1}{2} X_t (1-X_t^2)(1+3X_t^2)dt$ et $\langle X \rangle_t = \int_0^t X_s^2 (1-X_s^2)^2 ds$. On applique Itô comme suggéré dans l'énoncé pour calculer d'abord $	\frac{X_t^2}{1-X_t^2} = F(X_t)$ (avec $F(x)=\frac{x^2}{1-x^2} \ C^2$) puis $U_t$. En notant que $F'(x)= \frac{2x}{(1-x^2)^2}$, que $F''(x)=\frac{2(1+3x^2)}{(1-x^2)^3}$ et que $F(1/\sqrt{2}) = 1$, on obtient :
+$$\frac{X_t^2}{1-X_t^2} = 1 + 2 \int_0^t \frac{X_s^2}{1-X_s^2} dB_s$$
+Et donc :
+$$U_t = 1 + 2 \int_0^{t\wedge \tau} \frac{X_s^2}{1-X_s^2} dB_s$$
+
+\textbf{(ii)} On a :
+$$\langle U \rangle_t = 4 \int_0^t \frac{X_s^4}{(1-X_s^2)^2} \ind_{\{ s \leq \tau \}} ds$$
+et donc :
+$$\E \left( \langle U \rangle_t \right) \leq 4t \frac{\gamma^4}{(1- \gamma^2)^2} < + \infty$$
+en se rappelant de la définition de $\tau$.  \\
+
+Ainsi, $U$ a son crochet borné. C'est donc une (vraie) martingale (de carré intégrable) et on a $\E (U_t)= \E (U_0)=1$. \\
+
+\textbf{(iii)} On a  $U_t \geq \frac{X^2_{t \wedge \tau}}{1-X_{t \wedge \tau}^2} \ind_{\{ \tau < + \infty \}}$ et donc :
+$$\liminf_{t \infty} U_t \geq \frac{X_{\tau}^2}{1-X_{\tau}} \ind_{\{ \tau < + \infty \}} = \frac{\gamma^2}{1- \gamma^2} \ind_{\{ \tau < + \infty \}}$$
+Si bien que via lemme de Fatou et en usant de (ii) :
+$$1 = \liminf_{t \infty} \E (U_t) \geq \E \left( \liminf_{t \infty} U_t \right) \geq \frac{\gamma^2}{1-\gamma^2} \prob (\tau < \infty)$$
+D'où finalement :
+$$\prob (\tau < \infty ) \leq \frac{1- \gamma^2}{\gamma^2}$$
+Ce qui conclut. \\
+
+\textbf{(iv)} On note $\tau^{(\gamma)}$ le temps d'attente défini dans l'énoncé pour bien voir la dépendance en $\gamma$. On a donc par (iii), pour tout $\gamma \in \ ]0,1[$, $\prob \left( \tau^{(\gamma)} < \infty \right) \leq \frac{1-\gamma^2}{\gamma^2}$. On passe à la limite $\gamma \rightarrow 1^-$ et on obtient :
+$$\prob (\tau^{(1)} < \infty ) = 0$$
+Donc $X_t < 1$ p.s. \\
+
+\textbf{(v)} En reprenant ce qu'on avait calculé en (ii), on a en fait $dV_t = 2V_t dB_t$. \\
+
+\textbf{(vi)} La solution à cette équation est la semimartingale exponentielle de $2B$, i.e. :
+$$V_t = \exp{(2B_t-t)}$$ \\
+Comme $V_t = \frac{X^2_t}{1-X^2_t}$ et que $X_t > 0$, on en déduit que :
+$$X_t = \sqrt{\frac{\exp{(2B_t-t)}}{1+\exp{(2B_t-t)}}}$$
+
+\end{document}
